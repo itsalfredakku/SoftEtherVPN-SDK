@@ -17,6 +17,9 @@ echo
 echo 'Welcome to the corner-cutting configure script !'
 echo
 
+################################################################################
+## SoftEtherVPN configure script for iOS and Android
+################################################################################
 
 # Check if SoftEtherVPN repository exists
 if [ ! -d ./SoftEtherVPN ]; then
@@ -28,6 +31,19 @@ if [ ! -d ./SoftEtherVPN ]; then
     echo 'Cloning done.'
 fi
 
+# If SoftEtherVPN repository exists, configure it
+if [ -d ./SoftEtherVPN ]; then
+    cd SoftEtherVPN
+    echo 'Configuring SoftEtherVPN...'
+    ./configure
+    make -C build
+    #make -C build install
+fi
+
+################################################################################
+## cmake-ios configure script for iOS and Android
+################################################################################
+
 # Check if ios-cmake repository exists
 if [ ! -d ./ios-cmake ]; then
     echo 'cmake-ios repo not found. Cloning...'
@@ -35,11 +51,25 @@ if [ ! -d ./ios-cmake ]; then
     echo 'Cloning done.'
 fi
 
-# If SoftEtherVPN repository exists, configure it
-if [ -d ./SoftEtherVPN ]; then
-    cd SoftEtherVPN
-    echo 'Configuring SoftEtherVPN...'
-    ./configure
-    make -C build
-    make -C build install
+################################################################################
+## OpenSSL configure script for iOS and Android
+################################################################################
+
+# Check if OpenSSL repository exists
+if [ ! -d ./openssl ]; then
+    echo 'OpenSSL repo not found. Cloning...'
+    git clone https://github.com/openssl/openssl.git ./openssl
+    echo 'Cloning done.'
+fi
+
+# If OpenSSL repository exists, configure it
+if [ -d ./openssl ]; then
+    cd openssl
+    echo 'Configuring OpenSSL...'
+    export CROSS_TOP=$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer
+    export CROSS_SDK=$(xcrun --sdk iphoneos --show-sdk-path | xargs basename)
+    export CC="clang -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
+    ./Configure ios64-cross no-shared --prefix=$(pwd)/build-ios64
+    make
+    cd ..
 fi
