@@ -1,0 +1,45 @@
+#!/bin/sh
+
+set -e
+
+echo '---------------------------------------------------------------------'
+echo 'SoftEther VPN for iOS and Android'
+echo
+echo 'Copyright (c) all contributors on SoftEther VPN project in GitHub.'
+echo 'Copyright (c) Daiyuu Nobori, SoftEther Project at University of Tsukuba, and SoftEther Corporation.'
+echo
+echo 'Licensed under the Apache License, Version 2.0 (the License).'
+echo
+echo 'Read and understand README, LICENSE and WARNING before use.'
+echo '---------------------------------------------------------------------'
+echo
+
+echo 'Welcome to the corner-cutting configure script !'
+echo
+
+
+# Check if SoftEtherVPN repository exists
+if [ ! -d ./SoftEtherVPN ]; then
+    echo 'SoftEtherVPN repo not found. Cloning...'
+    git clone https://github.com/SoftEtherVPN/SoftEtherVPN.git ./SoftEtherVPN
+    cd SoftEtherVPN
+    git submodule init && git submodule update
+    cd ..
+    echo 'Cloning done.'
+fi
+
+# Check if ios-cmake repository exists
+if [ ! -d ./ios-cmake ]; then
+    echo 'cmake-ios repo not found. Cloning...'
+    git clone https://github.com/leetal/ios-cmake.git ./ios-cmake
+    echo 'Cloning done.'
+fi
+
+# If SoftEtherVPN repository exists, configure it
+if [ -d ./SoftEtherVPN ]; then
+    cd SoftEtherVPN
+    echo 'Configuring SoftEtherVPN...'
+    ./configure
+    make -C build
+    make -C build install
+fi
