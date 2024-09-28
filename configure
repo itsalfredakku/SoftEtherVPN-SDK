@@ -17,27 +17,33 @@ echo
 echo 'Welcome to the corner-cutting configure script !'
 echo
 
+PROJECT_ROOT=$(pwd)
+SOFTETHERVPN_ROOT=$PROJECT_ROOT/cache/SoftEtherVPN
+IOS_CMAKE_ROOT=$PROJECT_ROOT/cache/ios-cmake
+OPEN_SSL_ROOT=$PROJECT_ROOT/cache/openssl
+
 ################################################################################
 ## SoftEtherVPN configure script for iOS and Android
 ################################################################################
 
 # Check if SoftEtherVPN repository exists
-if [ ! -d ./SoftEtherVPN ]; then
+if [ ! -d $SOFTETHERVPN_ROOT ]; then
     echo 'SoftEtherVPN repo not found. Cloning...'
-    git clone https://github.com/SoftEtherVPN/SoftEtherVPN.git ./SoftEtherVPN
-    cd SoftEtherVPN
+    git clone https://github.com/SoftEtherVPN/SoftEtherVPN.git $SOFTETHERVPN_ROOT
+    cd $SOFTETHERVPN_ROOT
     git submodule init && git submodule update
-    cd ..
     echo 'Cloning done.'
+    cd $PROJECT_ROOT
 fi
 
 # If SoftEtherVPN repository exists, configure it
-if [ -d ./SoftEtherVPN ]; then
-    cd SoftEtherVPN
+if [ -d $SOFTETHERVPN_ROOT ]; then
+    cd $SOFTETHERVPN_ROOT
     echo 'Configuring SoftEtherVPN...'
     ./configure
     make -C build
     #make -C build install
+    cd $PROJECT_ROOT
 fi
 
 ################################################################################
@@ -45,9 +51,9 @@ fi
 ################################################################################
 
 # Check if ios-cmake repository exists
-if [ ! -d ./ios-cmake ]; then
+if [ ! -d $IOS_CMAKE_ROOT ]; then
     echo 'cmake-ios repo not found. Cloning...'
-    git clone https://github.com/leetal/ios-cmake.git ./ios-cmake
+    git clone https://github.com/leetal/ios-cmake.git $IOS_CMAKE_ROOT
     echo 'Cloning done.'
 fi
 
@@ -56,20 +62,20 @@ fi
 ################################################################################
 
 # Check if OpenSSL repository exists
-if [ ! -d ./openssl ]; then
+if [ ! -d $OPEN_SSL_ROOT ]; then
     echo 'OpenSSL repo not found. Cloning...'
-    git clone https://github.com/openssl/openssl.git ./openssl
+    git clone https://github.com/openssl/openssl.git $OPEN_SSL_ROOT
     echo 'Cloning done.'
 fi
 
 # If OpenSSL repository exists, configure it
-if [ -d ./openssl ]; then
-    cd openssl
+if [ -d $OPEN_SSL_ROOT ]; then
+    cd $OPEN_SSL_ROOT
     echo 'Configuring OpenSSL...'
     export CROSS_TOP=$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer
     export CROSS_SDK=$(xcrun --sdk iphoneos --show-sdk-path | xargs basename)
     export CC="clang -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
     ./Configure ios64-cross no-shared --prefix=$(pwd)/build-ios64
     make
-    cd ..
+    cd $PROJECT_ROOT
 fi
