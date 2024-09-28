@@ -71,11 +71,12 @@ fi
 # If OpenSSL repository exists, configure it
 if [ -d $OPEN_SSL_ROOT ]; then
     cd $OPEN_SSL_ROOT
+
     echo 'Configuring OpenSSL...'
     export CROSS_TOP=$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer
     export CROSS_SDK=$(xcrun --sdk iphoneos --show-sdk-path | xargs basename)
     export CC="clang -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
-    ./Configure ios64-cross no-shared --prefix=$(pwd)/build-ios64
+    ./Configure ios64-cross no-shared
     make
     cd $PROJECT_ROOT
 fi
